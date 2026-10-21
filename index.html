@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>기본 입력창</title>
+  <title>정보 방탈출</title>
 
   <style>
     * {
@@ -91,17 +91,17 @@
 
 <body>
   <main class="container">
-    <h2>기본 입력창</h2>
+    <h2>암호 입력창</h2>
 
     <form id="inputForm">
-      <label for="userInput">내용</label>
+      <label for="userInput">입력</label>
       <textarea
         id="userInput"
-        placeholder="내용을 입력해 주세요..."
+        placeholder="암호 입력..."
         required
       ></textarea>
 
-      <button type="submit">제출</button>
+      <button type="submit">확인</button>
     </form>
 
     <div id="result" aria-live="polite"></div>
@@ -118,7 +118,7 @@
       const value = input.value.trim();
 
       if (!value) {
-        result.textContent = "내용을 입력해 주세요.";
+        result.textContent = "암호를 입력해 주세요.";
         return;
       }
 
