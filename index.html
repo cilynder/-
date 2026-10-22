@@ -17,93 +17,200 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #f3f4f6;
-      font-family: Arial, sans-serif;
+      padding: 24px;
+      background-color: #e9e7df;
+      background-image:
+        linear-gradient(#d7d4ca 1px, transparent 1px),
+        linear-gradient(90deg, #d7d4ca 1px, transparent 1px);
+      background-size: 24px 24px;
+      font-family: "Malgun Gothic", sans-serif;
+      color: #252822;
     }
 
     .container {
-      width: 90%;
-      max-width: 420px;
-      padding: 28px;
-      background: white;
-      border-radius: 16px;
+      position: relative;
+      width: 100%;
+      max-width: 430px;
+      padding: 34px 30px 30px;
+      background: #faf9f4;
+      border: 1px solid #b9b7ad;
+      box-shadow: 5px 5px 0 #cecbc0;
+    }
+
+    .top-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      margin-bottom: 28px;
+      border-bottom: 1px solid #d5d2c8;
+    }
+
+    .category {
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1.5px;
+      color: #66695e;
+    }
+
+    .status {
+      padding: 5px 8px;
+      border: 1px solid #a94f3d;
+      color: #a94f3d;
+      font-family: monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
     }
 
     h2 {
-      margin-top: 0;
-      margin-bottom: 20px;
-      color: #222;
+      margin: 0 0 10px;
+      font-size: 27px;
+      font-weight: 800;
+      letter-spacing: -1px;
     }
 
-    label {
+    .description {
+      margin: 0 0 30px;
+      color: #77776e;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 9px;
+      color: #46493f;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      background: #a94f3d;
+    }
+
+    textarea {
       display: block;
-      margin-bottom: 8px;
-      color: #444;
-      font-size: 14px;
-    }
-
-    input,
-    textarea {
       width: 100%;
+      min-height: 46px;
       padding: 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 16px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    input:focus,
-    textarea:focus {
-      border-color: #4f46e5;
-    }
-
-    textarea {
       resize: vertical;
-      min-height: 20px;
+      border: 1px solid #c8c6ba;
+      border-radius: 0;
+      background: #fffefa;
+      color: #252822;
+      font: 15px monospace;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    textarea::placeholder {
+      color: #aaa99f;
+      font-family: "Malgun Gothic", sans-serif;
+      font-size: 13px;
+    }
+
+    textarea:focus {
+      border-color: #646d4a;
+      box-shadow: inset 3px 0 #646d4a;
     }
 
     button {
       width: 100%;
-      margin-top: 16px;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      background: #4f46e5;
-      color: white;
-      font-size: 16px;
+      margin-top: 12px;
+      padding: 14px;
+      border: 1px solid #30352b;
+      border-radius: 0;
+      background: #373d32;
+      color: #faf9f4;
+      font-size: 14px;
+      font-weight: bold;
+      letter-spacing: 1px;
       cursor: pointer;
+      transition: background 0.15s;
     }
 
     button:hover {
-      background: #4338ca;
+      background: #505844;
+    }
+
+    button:active {
+      background: #292e25;
     }
 
     #result {
-      margin-top: 16px;
+      margin-top: 15px;
+      color: #a94f3d;
+      font-size: 13px;
+      line-height: 1.6;
       overflow-wrap: anywhere;
       white-space: pre-wrap;
-      color: #333;
+    }
+
+    .bottom-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 32px;
+      padding-top: 13px;
+      border-top: 1px solid #d5d2c8;
+      color: #96958b;
+      font-family: monospace;
+      font-size: 10px;
+      letter-spacing: 0.4px;
+    }
+
+    @media (max-width: 380px) {
+      .container {
+        padding: 26px 21px 23px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
     }
   </style>
 </head>
 
 <body>
   <main class="container">
+    <div class="top-line">
+      <span class="category">정보 방탈출 / ENTRY 01</span>
+      <span class="status">LOCKED</span>
+    </div>
+
     <h2>암호 입력창</h2>
 
+    <p class="description">
+      잠금 장치가 작동 중입니다.<br>
+      단서를 확인하고 암호를 입력하세요.
+    </p>
+
     <form id="inputForm">
-      <label for="userInput">입력</label>
+      <label class="section-title" for="userInput">
+        ACCESS CODE
+      </label>
+
       <textarea
         id="userInput"
         placeholder="암호 입력..."
+        rows="1"
         required
       ></textarea>
 
-      <button type="submit">확인</button>
+      <button type="submit">잠금 해제　→</button>
     </form>
 
     <div id="result" aria-live="polite"></div>
+
+    <div class="bottom-line">
+      <span>SECURITY SYSTEM</span>
+      <span>UNAUTHORIZED ACCESS PROHIBITED</span>
+    </div>
   </main>
 
   <script>
@@ -117,8 +224,8 @@
       const value = input.value.trim();
 
       if (value === "??") {
-      window.location.href = "result.html";
-      return;
+        window.location.href = "result.html";
+        return;
       }
 
       if (!value) {
