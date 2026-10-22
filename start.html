@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>정보 방탈출</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      background-color: #e9e7df;
+      background-image:
+        linear-gradient(#d7d4ca 1px, transparent 1px),
+        linear-gradient(90deg, #d7d4ca 1px, transparent 1px);
+      background-size: 24px 24px;
+      font-family: "Malgun Gothic", sans-serif;
+      color: #252822;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      padding: 36px 30px;
+      background: #faf9f4;
+      border: 1px solid #b9b7ad;
+      box-shadow: 5px 5px 0 #cecbc0;
+    }
+
+    .top-line {
+      display: flex;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid #d5d2c8;
+      color: #66695e;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .status {
+      color: #a94f3d;
+      font-family: monospace;
+    }
+
+    h1 {
+      margin: 0 0 18px;
+      font-size: 34px;
+      letter-spacing: -1.5px;
+    }
+
+    .description {
+      margin-bottom: 35px;
+      color: #77776e;
+      font-size: 14px;
+      line-height: 2;
+    }
+
+    .notice {
+      padding: 16px;
+      margin-bottom: 28px;
+      border-left: 3px solid #a94f3d;
+      background: #f0eee6;
+      font-size: 13px;
+      line-height: 1.9;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid #30352b;
+      border-radius: 0;
+      background: #373d32;
+      color: #faf9f4;
+      font-size: 15px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #505844;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 30px;
+      padding-top: 14px;
+      border-top: 1px solid #d5d2c8;
+      color: #96958b;
+      font: 10px monospace;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <div class="top-line">
+      <span>정보 방탈출</span>
+      <span class="status">SYSTEM READY</span>
+    </div>
+
+    <h1>탈출할 준비가<br>되었습니까?</h1>
+
+    <p class="description">
+      주어진 단서를 조사하고 암호를 찾아라.<br>
+      올바른 암호를 입력하면 탈출할 수 있다.
+    </p>
+
+    <div class="notice">
+      <strong>MISSION BRIEFING</strong><br>
+      · 시작 버튼을 누르면 타이머가 작동합니다.<br>
+      · 모든 문제를 해결하고 마지막 암호를 입력하세요.<br>
+      · 탈출에 걸린 시간은 자동으로 기록됩니다.
+    </div>
+
+    <button id="startButton">게임 시작　→</button>
+
+    <div class="footer">
+      <span>SECURITY SYSTEM</span>
+      <span>MISSION 001</span>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById("startButton").addEventListener("click", function () {
+      localStorage.setItem("escapeStartTime", Date.now().toString());
+      localStorage.removeItem("escapeElapsedTime");
+
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
