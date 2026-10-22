@@ -202,74 +202,77 @@
       <span>ENTRY 01</span>
     </div>
   </main>
+<script>
+  const form = document.getElementById("inputForm");
+  const input = document.getElementById("userInput");
+  const result = document.getElementById("result");
+  const timer = document.getElementById("timer");
 
-  <script>
-    const form = document.getElementById("inputForm");
-    const input = document.getElementById("userInput");
-    const result = document.getElementById("result");
-    const timer = document.getElementById("timer");
+  const startTime = Number(localStorage.getItem("escapeStartTime"));
+  let timerInterval = null;
 
-    const startTime = Number(localStorage.getItem("escapeStartTime"));
-    let timerInterval = null;
+  function formatTime(milliseconds) {
+    const totalCentiseconds = Math.floor(milliseconds / 10);
+    const minutes = Math.floor(totalCentiseconds / 6000);
+    const seconds = Math.floor(totalCentiseconds / 100) % 60;
+    const centiseconds = totalCentiseconds % 100;
 
-    function formatTime(milliseconds) {
-      const totalCentiseconds = Math.floor(milliseconds / 10);
-      const minutes = Math.floor(totalCentiseconds / 6000);
-      const seconds = Math.floor(totalCentiseconds / 100) % 60;
-      const centiseconds = totalCentiseconds % 100;
+    return (
+      String(minutes).padStart(2, "0") + ":" +
+      String(seconds).padStart(2, "0") + "." +
+      String(centiseconds).padStart(2, "0")
+    );
+  }
 
-      return (
-        String(minutes).padStart(2, "0") + ":" +
-        String(seconds).padStart(2, "0") + "." +
-        String(centiseconds).padStart(2, "0")
-      );
-    }
-
-    function updateTimer() {
-      if (startTime > 0) {
-        timer.textContent = formatTime(Date.now() - startTime);
-      }
-    }
-
+  function updateTimer() {
     if (startTime > 0) {
-      updateTimer();
-      timerInterval = setInterval(updateTimer, 30);
-    } else {
-      timer.textContent = "--:--.--";
-      result.textContent = "시작 화면에서 게임을 시작해 주세요.";
-      input.disabled = true;
-      form.querySelector("button").disabled = true;
-      form.querySelector("button").textContent = "게임 시작 필요";
+      timer.textContent = formatTime(Date.now() - startTime);
+    }
+  }
+
+  if (startTime > 0) {
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 30);
+  } else {
+    timer.textContent = "--:--.--";
+    result.textContent = "시작 화면에서 게임을 시작해 주세요.";
+    input.disabled = true;
+    form.querySelector("button").disabled = true;
+  }
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const value = input.value.trim();
+
+    if (!value) {
+      result.textContent = "암호를 입력해 주세요.";
+      return;
     }
 
-    form.addEventListener("submit", function (event) {
-      event.preventDefault();
+    // 관리 화면에서 설정한 암호를 가져옴
+    // 아직 변경하지 않았다면 기본 암호는 ??
+    const correctPassword =
+      localStorage.getItem("escapePassword") ?? "??";
 
-      const value = input.value.trim();
+    if (value === correctPassword) {
+      const elapsedTime = Date.now() - startTime;
 
-      if (!value) {
-        result.textContent = "암호를 입력해 주세요.";
-        return;
-      }
+      clearInterval(timerInterval);
 
-      if (value === "??") {
-        const elapsedTime = Date.now() - startTime;
+      localStorage.setItem(
+        "escapeElapsedTime",
+        elapsedTime.toString()
+      );
 
-        clearInterval(timerInterval);
+      window.location.href = "result.html";
+      return;
+    }
 
-        localStorage.setItem(
-          "escapeElapsedTime",
-          elapsedTime.toString()
-        );
-
-        window.location.href = "result.html";
-        return;
-      }
-
-      result.textContent = "암호가 올바르지 않습니다.";
-      input.value = "";
-      input.focus();
-    });
-  </script>
+    result.textContent = "암호가 올바르지 않습니다.";
+    input.value = "";
+    input.focus();
+  });
+</script>
 </body>
 </html>
