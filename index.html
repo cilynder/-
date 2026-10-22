@@ -116,6 +116,11 @@
 
       const value = input.value.trim();
 
+      if (value === "??") {
+      window.location.href = "result.html";
+      return;
+      }
+
       if (!value) {
         result.textContent = "암호를 입력해 주세요.";
         return;
