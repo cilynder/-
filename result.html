@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>탈출!</title>
+  <title>탈출 성공!</title>
 
   <style>
     * {
@@ -16,42 +16,214 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #f3f4f6;
-      font-family: Arial, sans-serif;
+      padding: 24px;
+      background-color: #e9e7df;
+      background-image:
+        linear-gradient(#d7d4ca 1px, transparent 1px),
+        linear-gradient(90deg, #d7d4ca 1px, transparent 1px);
+      background-size: 24px 24px;
+      font-family: "Malgun Gothic", sans-serif;
+      color: #252822;
     }
 
     .container {
-      width: 90%;
+      width: 100%;
       max-width: 1080px;
-      padding: 14px;
-      background: white;
+      padding: 34px;
+      background: #faf9f4;
+      border: 1px solid #b9b7ad;
+      box-shadow: 5px 5px 0 #cecbc0;
     }
 
-    h2 {
-      margin-top: 0;
-      margin-bottom: 20px;
-      color: #222;
+    .top-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 14px;
+      margin-bottom: 35px;
+      border-bottom: 1px solid #d5d2c8;
+      color: #66695e;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1px;
     }
 
-    label {
-      display: block;
-      margin-bottom: 8px;
-      color: #444;
+    .status {
+      color: #646d4a;
+      font-family: monospace;
+    }
+
+    .success-mark {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 58px;
+      height: 58px;
+      margin-bottom: 22px;
+      border: 2px solid #646d4a;
+      color: #646d4a;
+      font-size: 30px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: 34px;
+      letter-spacing: -1.5px;
+    }
+
+    .description {
+      margin: 0 0 32px;
+      color: #77776e;
       font-size: 14px;
+      line-height: 1.9;
     }
 
-   
+    .record {
+      padding: 24px;
+      margin-bottom: 28px;
+      background: #efeee6;
+      border: 1px solid #dedbd0;
+    }
+
+    .record-label {
+      margin-bottom: 12px;
+      color: #77776e;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    #elapsedTime {
+      color: #373d32;
+      font: 42px monospace;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+
+    .record-note {
+      margin-top: 12px;
+      color: #77776e;
+      font-size: 12px;
+    }
+
+    .message {
+      margin-bottom: 25px;
+      font-size: 14px;
+      line-height: 1.9;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #30352b;
+      border-radius: 0;
+      background: #373d32;
+      color: #faf9f4;
+      font-size: 14px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #505844;
+    }
+
+    .bottom-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 32px;
+      padding-top: 14px;
+      border-top: 1px solid #d5d2c8;
+      color: #96958b;
+      font: 10px monospace;
+    }
+
+    @media (max-width: 500px) {
+      .container {
+        padding: 26px 21px;
+      }
+
+      h1 {
+        font-size: 29px;
+      }
+
+      #elapsedTime {
+        font-size: 34px;
+      }
+    }
   </style>
 </head>
 
 <body>
   <main class="container">
-    <h2>탈출입니다!</h2>
-    <h3>도우미에게 알려주세요>
+    <div class="top-line">
+      <span>정보 방탈출 / MISSION COMPLETE</span>
+      <span class="status">UNLOCKED</span>
+    </div>
+
+    <div class="success-mark">✓</div>
+
+    <h1>탈출 성공!</h1>
+
+    <p class="description">
+      모든 과정을 완료했습니다.<br>
+      아래 기록을 도우미에게 보여주세요.
+    </p>
+
+    <section class="record">
+      <div class="record-label">YOUR ESCAPE TIME</div>
+      <div id="elapsedTime">--:--.--</div>
+      <div class="record-note" id="recordNote">
+        최종 탈출 기록
+      </div>
+    </section>
+
+    <div class="message" id="message">
+      축하합니다! 임무를 완료했습니다.
+    </div>
+
+    <button id="restartButton">처음으로 돌아가기　→</button>
+
+    <div class="bottom-line">
+      <span>SECURITY SYSTEM</span>
+      <span>MISSION COMPLETE</span>
+    </div>
   </main>
 
   <script>
-   
+    const elapsedTimeElement = document.getElementById("elapsedTime");
+    const recordNote = document.getElementById("recordNote");
+    const message = document.getElementById("message");
+
+    function formatTime(milliseconds) {
+      const totalCentiseconds = Math.floor(milliseconds / 10);
+      const minutes = Math.floor(totalCentiseconds / 6000);
+      const seconds = Math.floor(totalCentiseconds / 100) % 60;
+      const centiseconds = totalCentiseconds % 100;
+
+      return (
+        String(minutes).padStart(2, "0") + ":" +
+        String(seconds).padStart(2, "0") + "." +
+        String(centiseconds).padStart(2, "0")
+      );
+    }
+
+    const savedTime = localStorage.getItem("escapeElapsedTime");
+
+    if (savedTime !== null && Number.isFinite(Number(savedTime))) {
+      elapsedTimeElement.textContent = formatTime(Number(savedTime));
+      recordNote.textContent = "기록 저장 완료 · 분:초.100분의 1초";
+    } else {
+      elapsedTimeElement.textContent = "기록 없음";
+      recordNote.textContent = "게임을 완료한 기록을 찾을 수 없습니다.";
+      message.textContent = "기록을 확인하려면 시작 화면부터 게임을 진행해 주세요.";
+    }
+
+    document.getElementById("restartButton").addEventListener("click", function () {
+      window.location.href = "start.html";
+    });
   </script>
 </body>
 </html>
