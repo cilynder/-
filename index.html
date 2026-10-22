@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -38,6 +39,7 @@
     .top-line {
       display: flex;
       justify-content: space-between;
+      gap: 10px;
       padding-bottom: 14px;
       margin-bottom: 32px;
       border-bottom: 1px solid #d5d2c8;
@@ -74,21 +76,39 @@
       line-height: 1.9;
     }
 
+    .buttons {
+      display: flex;
+      gap: 10px;
+    }
+
     button {
-      width: 100%;
-      padding: 15px;
+      padding: 14px;
       border: 1px solid #30352b;
       border-radius: 0;
-      background: #373d32;
-      color: #faf9f4;
-      font-size: 15px;
+      font-family: inherit;
+      font-size: 14px;
       font-weight: bold;
-      letter-spacing: 1px;
       cursor: pointer;
     }
 
-    button:hover {
+    .start-button {
+      flex: 1;
+      background: #373d32;
+      color: #faf9f4;
+    }
+
+    .start-button:hover {
       background: #505844;
+    }
+
+    .manage-button {
+      min-width: 100px;
+      background: #faf9f4;
+      color: #373d32;
+    }
+
+    .manage-button:hover {
+      background: #e9e7df;
     }
 
     .footer {
@@ -100,6 +120,132 @@
       border-top: 1px solid #d5d2c8;
       color: #96958b;
       font: 10px monospace;
+    }
+
+    /* 관리창 */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background: #25282299;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 390px;
+      padding: 26px;
+      background: #faf9f4;
+      border: 1px solid #b9b7ad;
+      box-shadow: 5px 5px 0 #25282244;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      margin-bottom: 22px;
+      border-bottom: 1px solid #d5d2c8;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 21px;
+    }
+
+    .close-button {
+      padding: 4px 9px;
+      border: 1px solid #c8c6ba;
+      background: transparent;
+      color: #55584e;
+      font-size: 19px;
+    }
+
+    .modal-description {
+      margin: 0 0 20px;
+      color: #77776e;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 8px;
+      color: #46493f;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #c8c6ba;
+      border-radius: 0;
+      background: #fffefa;
+      color: #252822;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .modal input:focus {
+      border-color: #646d4a;
+    }
+
+    .modal-action {
+      width: 100%;
+      margin-top: 12px;
+      background: #373d32;
+      color: #faf9f4;
+    }
+
+    .modal-action:hover {
+      background: #505844;
+    }
+
+    .secondary-action {
+      background: transparent;
+      color: #373d32;
+    }
+
+    .message {
+      margin-top: 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .message.error {
+      color: #a94f3d;
+    }
+
+    .message.success {
+      color: #646d4a;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 380px) {
+      .container {
+        padding: 26px 20px;
+      }
+
+      h1 {
+        font-size: 29px;
+      }
+
+      .manage-button {
+        min-width: 82px;
+      }
     }
   </style>
 </head>
@@ -125,7 +271,15 @@
       · 탈출에 걸린 시간은 자동으로 기록됩니다.
     </div>
 
-    <button id="startButton">게임 시작　→</button>
+    <div class="buttons">
+      <button class="start-button" id="startButton">
+        게임 시작　→
+      </button>
+
+      <button class="manage-button" id="manageButton">
+        관리 ⚙
+      </button>
+    </div>
 
     <div class="footer">
       <span>SECURITY SYSTEM</span>
@@ -133,12 +287,154 @@
     </div>
   </main>
 
+  <!-- 관리자 비밀번호 확인 -->
+  <div class="modal-overlay" id="adminModal">
+    <section class="modal">
+      <div class="modal-header">
+        <h2>관리자 인증</h2>
+        <button class="close-button" id="closeButton" aria-label="닫기">×</button>
+      </div>
+
+      <p class="modal-description">
+        관리자 비밀번호를 입력하세요.
+      </p>
+
+      <form id="adminForm">
+        <label class="field-label" for="adminPassword">
+          ADMIN PASSWORD
+        </label>
+
+        <input
+          type="password"
+          id="adminPassword"
+          placeholder="관리자 비밀번호"
+          autocomplete="off"
+          required
+        >
+
+        <button class="modal-action" type="submit">
+          인증하기
+        </button>
+      </form>
+
+      <div id="adminMessage" class="message" aria-live="polite"></div>
+
+      <!-- 인증 성공 후 표시 -->
+      <form id="changeForm" hidden>
+        <label class="field-label" for="newPassword">
+          새로운 방탈출 암호
+        </label>
+
+        <input
+          type="text"
+          id="newPassword"
+          placeholder="새 암호 입력"
+          autocomplete="off"
+          required
+        >
+
+        <button class="modal-action" type="submit">
+          암호 변경하기
+        </button>
+      </form>
+    </section>
+  </div>
+
   <script>
-    document.getElementById("startButton").addEventListener("click", function () {
+    const startButton = document.getElementById("startButton");
+    const manageButton = document.getElementById("manageButton");
+    const adminModal = document.getElementById("adminModal");
+    const closeButton = document.getElementById("closeButton");
+
+    const adminForm = document.getElementById("adminForm");
+    const adminPassword = document.getElementById("adminPassword");
+    const adminMessage = document.getElementById("adminMessage");
+
+    const changeForm = document.getElementById("changeForm");
+    const newPassword = document.getElementById("newPassword");
+
+    // 게임 시작
+    startButton.addEventListener("click", function () {
       localStorage.setItem("escapeStartTime", Date.now().toString());
       localStorage.removeItem("escapeElapsedTime");
 
       window.location.href = "input.html";
+    });
+
+    // 관리자 창 열기
+    manageButton.addEventListener("click", function () {
+      adminModal.classList.add("show");
+      adminForm.hidden = false;
+      changeForm.hidden = true;
+
+      adminPassword.value = "";
+      newPassword.value = "";
+      adminMessage.textContent = "";
+      adminMessage.className = "message";
+
+      adminPassword.focus();
+    });
+
+    // 관리자 창 닫기
+    function closeModal() {
+      adminModal.classList.remove("show");
+    }
+
+    closeButton.addEventListener("click", closeModal);
+
+    adminModal.addEventListener("click", function (event) {
+      if (event.target === adminModal) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    });
+
+    // 관리자 비밀번호 확인
+    adminForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      if (adminPassword.value === "0423") {
+        adminForm.hidden = true;
+        changeForm.hidden = false;
+
+        adminMessage.textContent = "인증되었습니다. 새로운 암호를 설정하세요.";
+        adminMessage.className = "message success";
+
+        newPassword.focus();
+      } else {
+        adminMessage.textContent = "관리자 비밀번호가 올바르지 않습니다.";
+        adminMessage.className = "message error";
+
+        adminPassword.value = "";
+        adminPassword.focus();
+      }
+    });
+
+    // 방탈출 암호 변경
+    changeForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const value = newPassword.value.trim();
+
+      if (!value) {
+        adminMessage.textContent = "새로운 암호를 입력하세요.";
+        adminMessage.className = "message error";
+        return;
+      }
+
+      localStorage.setItem("escapePassword", value);
+
+      adminMessage.textContent = "암호가 변경되었습니다!";
+      adminMessage.className = "message success";
+
+      newPassword.value = "";
+
+      setTimeout(closeModal, 900);
     });
   </script>
 </body>
