@@ -305,24 +305,36 @@
       </p>
 
       <form id="adminForm">
-        <label class="field-label" for="adminPassword">
-          ADMIN PASSWORD
-        </label>
+      <label class="field-label" for="adminEmail">
+        ADMIN EMAIL
+      </label>
 
-        <input
-          type="password"
-          id="adminPassword"
-          placeholder="관리자 비밀번호"
-          autocomplete="off"
-          required
-        >
+      <input
+        type="email"
+        id="adminEmail"
+        placeholder="관리자 이메일"
+        autocomplete="username"
+        required
+      >
 
-        <button class="modal-action" type="submit">
-          인증하기
-        </button>
-      </form>
+      <label class="field-label" for="adminPassword">
+        ADMIN PASSWORD
+      </label>
 
-      <div id="adminMessage" class="message" aria-live="polite"></div>
+      <input
+        type="password"
+        id="adminPassword"
+        placeholder="관리자 비밀번호"
+        autocomplete="current-password"
+        required
+      >
+
+      <button class="modal-action" type="submit">
+        인증하기
+      </button>
+    </form>
+
+    <div id="adminMessage" class="message" aria-live="polite"></div>
 
       <!-- 인증 성공 후 표시 -->
       <form id="changeForm" hidden>
@@ -346,64 +358,98 @@
   </div>
 
   <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-analytics.js";
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
+    import { initializeApp } from
+      "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
 
-    // Your web app's Firebase configuration
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    import {
+      getDatabase,
+      ref,
+      set
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
+
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+
+    // Firebase 설정
     const firebaseConfig = {
       apiKey: "AIzaSyDnGoHTQuK8HkJ6KkoxYovAAaIk9yI7yi0",
       authDomain: "thinkful-edu-party.firebaseapp.com",
+
+      databaseURL: "https://thinkful-edu-party-default-rtdb.firebaseio.com/",
+
       projectId: "thinkful-edu-party",
       storageBucket: "thinkful-edu-party.firebasestorage.app",
       messagingSenderId: "903216777527",
-      appId: "1:903216777527:web:81cb519bca7d7f1c5ff2b2",
+      appId: "1:903216777:web:81cb519bca7d7f1c5ff2b2",
       measurementId: "G-V9FJY91PZ3"
     };
 
-    // Initialize Firebase
+
+    // Firebase 초기화
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+
+
+    // HTML 요소
     const startButton = document.getElementById("startButton");
     const manageButton = document.getElementById("manageButton");
     const adminModal = document.getElementById("adminModal");
     const closeButton = document.getElementById("closeButton");
 
     const adminForm = document.getElementById("adminForm");
+    const adminEmail = document.getElementById("adminEmail");
     const adminPassword = document.getElementById("adminPassword");
     const adminMessage = document.getElementById("adminMessage");
 
     const changeForm = document.getElementById("changeForm");
     const newPassword = document.getElementById("newPassword");
 
+
     // 게임 시작
     startButton.addEventListener("click", function () {
-      localStorage.setItem("escapeStartTime", Date.now().toString());
+      localStorage.setItem(
+        "escapeStartTime",
+        Date.now().toString()
+      );
+
       localStorage.removeItem("escapeElapsedTime");
 
       window.location.href = "input.html";
     });
 
-    // 관리자 창 열기
+
+    // 관리창 열기
     manageButton.addEventListener("click", function () {
       adminModal.classList.add("show");
+
       adminForm.hidden = false;
       changeForm.hidden = true;
 
+      adminEmail.value = "";
       adminPassword.value = "";
       newPassword.value = "";
+
       adminMessage.textContent = "";
       adminMessage.className = "message";
 
-      adminPassword.focus();
+      adminEmail.focus();
     });
 
-    // 관리자 창 닫기
-    function closeModal() {
+
+    // 관리창 닫기
+    async function closeModal() {
       adminModal.classList.remove("show");
+
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error("로그아웃 오류:", error);
+      }
     }
 
     closeButton.addEventListener("click", closeModal);
@@ -420,29 +466,41 @@
       }
     });
 
-    // 관리자 비밀번호 확인
-    adminForm.addEventListener("submit", function (event) {
+
+    // Firebase 관리자 인증
+    adminForm.addEventListener("submit", async function (event) {
       event.preventDefault();
 
-      if (adminPassword.value === "0423") {
+      try {
+        await signInWithEmailAndPassword(
+          auth,
+          adminEmail.value.trim(),
+          adminPassword.value
+        );
+
         adminForm.hidden = true;
         changeForm.hidden = false;
 
-        adminMessage.textContent = "인증되었습니다. 새로운 암호를 설정하세요.";
+        adminMessage.textContent =
+          "인증되었습니다. 새로운 암호를 설정하세요.";
+
         adminMessage.className = "message success";
 
         newPassword.focus();
-      } else {
-        adminMessage.textContent = "관리자 비밀번호가 올바르지 않습니다.";
-        adminMessage.className = "message error";
 
-        adminPassword.value = "";
-        adminPassword.focus();
+      } catch (error) {
+        console.error(error);
+
+        adminMessage.textContent =
+          "로그인에 실패했습니다. 이메일과 비밀번호를 확인하세요.";
+
+        adminMessage.className = "message error";
       }
     });
 
-    // 방탈출 암호 변경
-    changeForm.addEventListener("submit", function (event) {
+
+    // 새로운 방탈출 암호 저장
+    changeForm.addEventListener("submit", async function (event) {
       event.preventDefault();
 
       const value = newPassword.value.trim();
@@ -453,14 +511,38 @@
         return;
       }
 
-      localStorage.setItem("escapePassword", value);
+      // 로그인된 관리자만 저장 가능
+      if (!auth.currentUser) {
+        adminMessage.textContent =
+          "관리자 인증이 필요합니다. 다시 로그인하세요.";
 
-      adminMessage.textContent = "암호가 변경되었습니다!";
-      adminMessage.className = "message success";
+        adminMessage.className = "message error";
+        adminForm.hidden = false;
+        changeForm.hidden = true;
 
-      newPassword.value = "";
+        return;
+      }
 
-      setTimeout(closeModal, 900);
+      try {
+        await set(ref(db, "escapePassword"), value);
+
+        adminMessage.textContent =
+          "암호가 변경되었습니다!";
+
+        adminMessage.className = "message success";
+
+        newPassword.value = "";
+
+        setTimeout(closeModal, 1000);
+
+      } catch (error) {
+        console.error(error);
+
+        adminMessage.textContent =
+          "암호 저장에 실패했습니다. 데이터베이스 URL과 규칙을 확인하세요.";
+
+        adminMessage.className = "message error";
+      }
     });
   </script>
 </body>
