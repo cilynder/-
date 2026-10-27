@@ -345,7 +345,28 @@
     </section>
   </div>
 
-  <script>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnGoHTQuK8HkJ6KkoxYovAAaIk9yI7yi0",
+      authDomain: "thinkful-edu-party.firebaseapp.com",
+      projectId: "thinkful-edu-party",
+      storageBucket: "thinkful-edu-party.firebasestorage.app",
+      messagingSenderId: "903216777527",
+      appId: "1:903216777527:web:81cb519bca7d7f1c5ff2b2",
+      measurementId: "G-V9FJY91PZ3"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
     const startButton = document.getElementById("startButton");
     const manageButton = document.getElementById("manageButton");
     const adminModal = document.getElementById("adminModal");
